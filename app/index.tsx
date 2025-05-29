@@ -11,12 +11,12 @@ export default function Index() {
         <View className="w-[90%] bg-white rounded-xl overflow-hidden shadow-lg">
           
           <View className="flex-row">
-            <TouchableOpacity className={`flex-1 py-4 items-center ${!isAgente ? "bg-green-500" : "bg-white"}`}
+            <TouchableOpacity className={`flex-1 py-4 items-center ${!isAgente ? "bg-[#6A994E]" : "bg-white"}`}
               onPress={() => setIsAgente(false)}>
               <Text className={`text-lg font-bold ${!isAgente ? "text-white" : "text-black"}`}>USUÁRIO</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className={`flex-1 py-4 items-center ${isAgente ? "bg-green-500" : "bg-white"}`}
+            <TouchableOpacity className={`flex-1 py-4 items-center ${isAgente ? "bg-[#6A994E]" : "bg-white"}`}
               onPress={() => setIsAgente(true)}>
               <Text className={`text-lg font-bold ${isAgente ? "text-white" : "text-black"}`}>AGENTE</Text>
             </TouchableOpacity>
