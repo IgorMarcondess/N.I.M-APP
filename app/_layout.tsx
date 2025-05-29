@@ -1,16 +1,15 @@
 
-import { Slot, Stack } from 'expo-router';
-
+import { Slot } from 'expo-router';
 import 'react-native-reanimated';
+import "../global.css";
 
 
-function RootLayoutNav() {
+export default function RootLayoutNav() {
 
 
   return (
-    
-      <Stack>
-        <Slot />
-      </Stack>
+
+    <Slot />
+
   );
 }
