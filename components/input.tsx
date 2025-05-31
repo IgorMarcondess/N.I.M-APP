@@ -11,7 +11,7 @@ export const Input = (Props: InputProps) => {
   const { imagem, text, styles, ...rest } = Props;
 
   return (
-    <View className="flex-row w-[95%] items-center border border-blue-500 rounded-2xl h-12 px-3 bg-white shadow-md mb-4">
+    <View className="flex-row w-[95%] items-center border border-[#6A994E] rounded-2xl h-16 px-3 bg-white shadow-md mb-4">
       {imagem && (
         <View className="justify-center items-center mr-2">
           {imagem}
