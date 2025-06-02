@@ -87,7 +87,7 @@ export default function Index() {
           </View>
         </View>
 
-        <TouchableOpacity onPress={handleSubmit(login)}  className="bg-[#6A994E] rounded-xl mt-8 py-4 px-16 items-center">
+        <TouchableOpacity onPress={() => router.push("/(cadastro)/cadastro")}  className="bg-[#6A994E] rounded-xl mt-8 py-4 px-16 items-center">
           <Text className="text-white font-black">REGISTRAR-SE</Text>
         </TouchableOpacity>
       </ImageBackground>

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { router } from "expo-router";
 import { auth } from "@/services/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import ModalSucesso from "@/components/modalSucesso";
 
 
 export default function Cadastro(){
@@ -21,7 +22,7 @@ export default function Cadastro(){
     });
     
     const [isAgente, setIsAgente] = useState(false);
-    const [isModal, setIsModal] = useState(true)
+    const [isModal, setIsModal] = useState(false)
     const schema = formSchema(isAgente);
 
     
@@ -45,8 +46,20 @@ export default function Cadastro(){
           console.log("Usuário criado:", user.uid);
           setIsModal(true)
 
-        } catch (error) {
-          
+          setTimeout(() => {
+                setIsModal(false);
+                router.replace('./');
+            }, 3000);
+
+        } catch (error: any) {
+          console.error("Erro ao criar conta:", error);
+
+          let mensagem = "Erro ao criar conta.";
+          if (error.code === "auth/email-already-in-use") {
+            mensagem = "E-mail já está em uso.";
+          }
+
+          Alert.alert("Desculpa! Erro ao criar conta", mensagem);
         }
     };
 
@@ -115,6 +128,7 @@ export default function Cadastro(){
           </TouchableOpacity>
         </View>
       </View>
+      {isModal && <ModalSucesso />}
     </SafeAreaView>
     )
 }
