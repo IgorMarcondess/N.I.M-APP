@@ -81,7 +81,7 @@ export default function Index() {
               )}
             </View>
 
-            <TouchableOpacity onPress={() => router.push("/(agente)/telaPrincipal")} className="bg-[#6A994E] rounded-xl mt-4 py-3 items-center" >
+            <TouchableOpacity onPress={() => router.push("/(usuario)/telaPrincipalUser")} className="bg-[#6A994E] rounded-xl mt-4 py-3 items-center" >
               {loading ? ( <ActivityIndicator color="#fff" /> ) : ( <Text className="text-white font-bold">ENTRAR</Text> )}
             </TouchableOpacity>
           </View>

@@ -9,34 +9,24 @@ import { router } from "expo-router";
 
 export default function TelaPrincipal(){
 
-      const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [localizacao, setLocalizacao] = useState<Location.LocationObject | null>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.warn("Permissão para acessar localização negada");
-        return;
-      }
-
-      const loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc);
-    })();
+    const buscarLocalizacao = async () => {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            setErrorMsg("Permissão para acessar localização negada");
+            return;
+          }
+    
+          const loc = await Location.getCurrentPositionAsync({});
+          setLocalizacao(loc);
+        };
+    
+        buscarLocalizacao();
   }, []);
 
-   const region: Region = location
-    ? {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }
-    : {
-        latitude: -23.55052,
-        longitude: -46.633308,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-      };
 
     return (
     <SafeAreaView className="flex-1 bg-[#264027]">
@@ -47,13 +37,23 @@ export default function TelaPrincipal(){
           <Text className="font-bold">CPF : 547.***.***-35</Text>
         </View>
 
-        {/* Mapa */}
-        <View className="overflow-hidden rounded-xl h-80 mb-3">
-          <MapView
-            style={{ width: "100%", height: "100%" }}
-            initialRegion={region}
-            showsUserLocation>
-          </MapView>
+       <View className="overflow-hidden rounded-xl h-80 mb-3">
+          {localizacao ? (
+            <MapView
+              style={{ width: "100%", height: "100%" }}
+              region={{
+                latitude: localizacao.coords.latitude,
+                longitude: localizacao.coords.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              showsUserLocation
+            />
+          ) : (
+            <View className="bg-gray-300 flex-1 items-center justify-center">
+              <Text className="text-white font-semibold">Carregando mapa...</Text>
+            </View>
+          )}
         </View>
 
         <View className="flex-row justify-between mb-6 px-2">
