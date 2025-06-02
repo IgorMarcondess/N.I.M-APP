@@ -5,6 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { router } from "expo-router";
+import { auth } from "@/services/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
 export default function Cadastro(){
@@ -19,13 +21,13 @@ export default function Cadastro(){
     });
     
     const [isAgente, setIsAgente] = useState(false);
+    const [isModal, setIsModal] = useState(true)
     const schema = formSchema(isAgente);
 
     
 
-    const { control, handleSubmit,
-    formState: { errors },
-    } = useForm({ resolver: zodResolver(schema),
+    const { control, handleSubmit, formState: { errors },} = useForm(
+    { resolver: zodResolver(schema),
         defaultValues: {
         nome: "",
         email: "",
@@ -35,10 +37,17 @@ export default function Cadastro(){
         },
     });
 
-    const handleCreate = async (data: any) => {
-        console.log("Dados recebidos:", data);
-        Alert.alert("Sucesso", "Conta criada com sucesso!");
-        // lógica de persistência aqui
+    const criacaoDeConta = async (data: any) => {
+        try {
+          const infoUsuario = await createUserWithEmailAndPassword( auth, data.email, data.senha);
+          const user = infoUsuario.user;
+
+          console.log("Usuário criado:", user.uid);
+          setIsModal(true)
+
+        } catch (error) {
+          
+        }
     };
 
     return(
@@ -101,7 +110,7 @@ export default function Cadastro(){
             <Text className="text-white font-bold">Voltar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="bg-[#6A994E] py-3 px-6 rounded-xl" onPress={handleSubmit(handleCreate)}>
+          <TouchableOpacity className="bg-[#6A994E] py-3 px-6 rounded-xl" onPress={handleSubmit(criacaoDeConta)}>
             <Text className="text-white font-bold">Próximo</Text>
           </TouchableOpacity>
         </View>

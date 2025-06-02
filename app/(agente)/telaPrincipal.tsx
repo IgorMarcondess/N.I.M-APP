@@ -1,9 +1,10 @@
-import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { View, Text, SafeAreaView, TouchableOpacity, ScrollView} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import MapView, { Marker, Region } from "react-native-maps";
+import MapView, { Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import Ocorrencias from "@/components/agente/ocorrencias";
+import { router } from "expo-router";
 //import { Ocorrencias } from "@/components/Ocorrencias";
 
 export default function TelaPrincipal(){
@@ -56,14 +57,15 @@ export default function TelaPrincipal(){
         </View>
 
         <View className="flex-row justify-between mb-6 px-2">
-        <TouchableOpacity className="bg-white rounded-xl items-center justify-center w-[48%] h-32">
+        <TouchableOpacity className="bg-white rounded-xl items-center justify-center w-[48%] h-32" onPress={() => router.push("/(agente)/ocorrencia")}>
             <Icon name="database" size={32} color="#264027" />
             <Text className="font-bold text-center mt-2 text-[#264027]">
             HISTÓRICO DE{"\n"}OCORRÊNCIAS
             </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="bg-white rounded-xl items-center justify-center w-[48%] h-32">
+        <TouchableOpacity   onPress={() => router.push("/(agente)/monitoramento")}
+      className="bg-white rounded-xl items-center justify-center w-[48%] h-32">
             <Icon name="tv" size={32} color="#264027" />
             <Text className="font-bold text-center mt-2 text-[#264027]">
             MONITORAMENTO
