@@ -1,55 +1,37 @@
+import GetAlertas from "@/services/GET/getAlertas";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { View, Text, ActivityIndicator } from "react-native";
 
 type Ocorrencia = {
-  solicitante: string;
+  id: number;
+  data: string;
+  horario?: string;
   cidade: string;
   estado: string;
   ocorrencia: string;
+  finalizado: boolean;
+  resolucao?: string | null;
 };
 
 export default function Ocorrencias(){
     const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchMockData() {
+   useEffect(() => {
+    async function fetchAlertas() {
       try {
-        // Simula uma espera de 1 segundo
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const data: Ocorrencia[] = [
-          {
-            solicitante: "João Silva",
-            cidade: "São Paulo",
-            estado: "SP",
-            ocorrencia: "Incêndio em residência na zona norte.",
-          },
-          {
-            solicitante: "Maria Oliveira",
-            cidade: "Rio de Janeiro",
-            estado: "RJ",
-            ocorrencia: "Acidente de trânsito com vítimas.",
-          },
-          {
-            solicitante: "Carlos Lima",
-            cidade: "Belo Horizonte",
-            estado: "MG",
-            ocorrencia: "Deslizamento de terra próximo a escola.",
-          },
-        ];
-
+        const data = await GetAlertas();
         setOcorrencias(data);
       } catch (error) {
-        console.error("Erro ao simular ocorrências:", error);
+        console.error("Erro ao carregar alertas:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMockData();
+    fetchAlertas();
   }, []);
 
   if (loading) {
@@ -61,11 +43,11 @@ export default function Ocorrencias(){
 
         {ocorrencias.map((item) => (
             <TouchableOpacity
-              key={item.solicitante}
+              key={item.cidade}
               className="bg-white rounded-xl p-4 mt-4 w-[90%] self-center items-center"
             >
               <Text className="font-bold">SOLICITANTE:</Text>
-              <Text>{item.solicitante}</Text>
+              <Text>{item.cidade}</Text>
 
               <View className="flex-row mt-2 mb-2">
                 <Text className="font-bold">CIDADE: </Text>

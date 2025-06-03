@@ -7,47 +7,58 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../components/input";
 import { router } from "expo-router";
 
+// Regex simples para validar CPF com 11 dígitos
+const cpfRegex = /^\d{11}$/;
+
 const schema = z.object({
   endereco: z.string().min(1, "Endereço é obrigatório"),
   cidade: z.string().min(1, "Cidade é obrigatória"),
   estado: z.string().min(1, "Estado é obrigatório"),
   observacao: z.string().min(10, "A observação deve ter pelo menos 10 caracteres"),
+  cpf: z.string()
+    .min(11, "CPF deve conter 11 dígitos")
+    .regex(cpfRegex, "CPF inválido. Deve conter apenas números e ter 11 dígitos"),
 });
 
 type FormData = z.infer<typeof schema>;
 
-
-export default function CriarOcorrencia(){
-     const { control,handleSubmit, setValue, formState: { errors }} = useForm<FormData>({
+export default function CriarOcorrencia() {
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       endereco: "",
       cidade: "",
       estado: "",
       observacao: "",
+      cpf: "",
     },
   });
 
   useEffect(() => {
     async function obterLocalizacaoEAtualizarCampos() {
-    try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-        console.warn("Permissão de localização não concedida");
-        return;
-    }
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.warn("Permissão de localização não concedida");
+          return;
+        }
 
-    const location = await Location.getCurrentPositionAsync({});
-    const [info] = await Location.reverseGeocodeAsync(location.coords);
+        const location = await Location.getCurrentPositionAsync({});
+        const [info] = await Location.reverseGeocodeAsync(location.coords);
 
-    if (info) {
-        setValue("endereco", `${info.street || ""} ${info.name || ""}`.trim());
-        setValue("cidade", info.city || "");
-        setValue("estado", info.region || "");
-    }
-    } catch (error) {
-    console.error("Erro ao obter localização:", error);
-    }
+        if (info) {
+          setValue("endereco", `${info.street || ""} ${info.name || ""}`.trim());
+          setValue("cidade", info.city || "");
+          setValue("estado", info.region || "");
+        }
+      } catch (error) {
+        console.error("Erro ao obter localização:", error);
+      }
     }
 
     obterLocalizacaoEAtualizarCampos();
@@ -58,79 +69,97 @@ export default function CriarOcorrencia(){
   };
 
   return (
-        <SafeAreaView className="bg-[#264027] flex-1 items-center py-8 justify-center">
-        <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', paddingVertical: 32}}>
+    <SafeAreaView className="bg-[#264027] flex-1 items-center py-8 justify-center">
+      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: 32 }}>
         <View className="items-center justify-center">
-            <Text className="text-white font-bold text-2xl mb-6">ABRIR OCORRÊNCIA</Text>
-            <Text className="text-white font-semibold mb-1">ENDEREÇO</Text>
-            <Controller
+          <Text className="text-white font-bold text-2xl mb-6">ABRIR OCORRÊNCIA</Text>
+
+          <Text className="text-white font-semibold mb-1">ENDEREÇO</Text>
+          <Controller
             control={control}
             name="endereco"
             render={({ field: { onChange, value } }) => (
-                <>
+              <>
                 <Input text="ENDEREÇO" value={value} onChangeText={onChange} />
                 {errors.endereco && <Text className="text-red-500 mb-2">{errors.endereco.message}</Text>}
-                </>
+              </>
             )}
-            />
-            <Text className="text-white text-xl font-semibold mb-1">CIDADE</Text>
-            <Controller
+          />
+
+          <Text className="text-white text-xl font-semibold mb-1">CIDADE</Text>
+          <Controller
             control={control}
             name="cidade"
             render={({ field: { onChange, value } }) => (
-                <>
+              <>
                 <Input text="CIDADE" value={value} onChangeText={onChange} />
                 {errors.cidade && <Text className="text-red-500 mb-2">{errors.cidade.message}</Text>}
-                </>
+              </>
             )}
-            />
-            <Text className="text-white text-xl font-semibold mb-1">ESTADO</Text>
-            <Controller
+          />
+
+          <Text className="text-white text-xl font-semibold mb-1">ESTADO</Text>
+          <Controller
             control={control}
             name="estado"
             render={({ field: { onChange, value } }) => (
-                <>
+              <>
                 <Input text="ESTADO" value={value} onChangeText={onChange} />
                 {errors.estado && <Text className="text-red-500 mb-2">{errors.estado.message}</Text>}
-                </>
+              </>
             )}
-            />
+          />
 
-            <Text className="text-white text-xl font-semibold mb-1">DESCRIÇÃO DO PROBLEMA</Text>
-            <Controller
+          <Text className="text-white text-xl font-semibold mb-1">CPF</Text>
+          <Controller
+            control={control}
+            name="cpf"
+            render={({ field: { onChange, value } }) => (
+              <>
+                <Input text="CPF (apenas números)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                {errors.cpf && <Text className="text-red-500 mb-2">{errors.cpf.message}</Text>}
+              </>
+            )}
+          />
+
+          <Text className="text-white text-xl font-semibold mb-1">DESCRIÇÃO DO PROBLEMA</Text>
+          <Controller
             control={control}
             name="observacao"
             render={({ field: { onChange, value } }) => (
-                <>
-                    <Input
-                    multiline
-                    numberOfLines={4}
-                    text="Descreva o que está ocorrendo para que um analista consiga auxiliar"
-                    value={value}
-                    onChangeText={onChange}
-                    styles="text-start h-full"
-                    />
+              <>
+                <Input
+                  multiline
+                  numberOfLines={4}
+                  text="Descreva o que está ocorrendo para que um analista consiga auxiliar"
+                  value={value}
+                  onChangeText={onChange}
+                  styles="text-start h-full"
+                />
                 {errors.observacao && (
-                    <Text className="text-red-500 mb-2 w-[90%] text-left">{errors.observacao.message}</Text>
+                  <Text className="text-red-500 mb-2 w-[90%] text-left">{errors.observacao.message}</Text>
                 )}
-                </>
+              </>
             )}
-            />
+          />
 
-            <View className="flex-row w-[95%] justify-between mt-24">
-            <TouchableOpacity  className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center" onPress={() => router.push("./")}>
-                <Text className="text-white font-bold">Voltar</Text>
+          <View className="flex-row w-[95%] justify-between mt-24">
+            <TouchableOpacity
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
+              onPress={() => router.push("./")}
+            >
+              <Text className="text-white font-bold">Voltar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-                className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-                onPress={handleSubmit(onSubmit)}
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
+              onPress={handleSubmit(onSubmit)}
             >
-                <Text className="text-white font-bold">Finalizar</Text>
+              <Text className="text-white font-bold">Finalizar</Text>
             </TouchableOpacity>
-            </View>
+          </View>
         </View>
-        </ScrollView>
-        </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

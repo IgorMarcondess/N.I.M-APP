@@ -1,7 +1,7 @@
 
 import { Slot } from 'expo-router';
 import 'react-native-reanimated';
-import Tela from "./(usuario)/criarOcorrencia"
+import Tela from "./(agente)/telaPrincipal"
 import "../global.css";
 
 
