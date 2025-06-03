@@ -38,7 +38,7 @@ export default function Index() {
       await signInWithEmailAndPassword(auth, email, senha);
 
       if (email.includes("@gov.com.br")) {
-        router.push("/(agente)/telaPrincipalAgente");
+        router.push("/(agente)/telaPrincipal");
       } else {
         router.push("/(usuario)/telaPrincipalUser");}
     } catch (error) {
