@@ -36,7 +36,11 @@ export default function Index() {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, senha);
-      Alert.alert("Sucesso", "Login realizado!");
+
+      if (email.includes("@gov.com.br")) {
+        router.push("/(agente)/telaPrincipalAgente");
+      } else {
+        router.push("/(usuario)/telaPrincipalUser");}
     } catch (error) {
       console.error(error);
       Alert.alert("Erro ao fazer login");
