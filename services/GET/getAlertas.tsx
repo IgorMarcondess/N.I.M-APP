@@ -14,7 +14,7 @@ export type Alerta = {
 export default async function GetAlertas() : Promise<Alerta[]> {
     
     try {
-        const response = await axios.get<Alerta[]>("http://192.168.15.10:8080/alerta/todos");
+        const response = await axios.get("http://192.168.15.10:8080/alerta/todos");
         console.log('Dados', response.data)
         return response.data;
     } catch (error) {

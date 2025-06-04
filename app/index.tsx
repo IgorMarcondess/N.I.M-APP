@@ -7,19 +7,20 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
+import GetUsuarios from "@/services/GET/getUsuario";
+import { useUser } from "../components/usuario/userContext";
 
 
 const formSchema = z.object({
   email: z.string().nonempty("E-mail obrigatório").email("Formato de e-mail inválido"),
   senha: z.string().nonempty("Senha obrigatória")
 });
-
-
 type ValuesForm = z.infer<typeof formSchema>;
 
 export default function Index() {
   const [isAgente, setIsAgente] = useState(true);
   const [loading, setLoading] = useState(false);
+  const { setUser } = useUser()
 
   
   const {control, handleSubmit, formState: { errors },} = useForm<ValuesForm>({
@@ -36,6 +37,9 @@ export default function Index() {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, senha);
+
+      const usuario = await GetUsuarios(email);
+      setUser(usuario);
 
       if (email.includes("@gov.com.br")) {
         router.push("/(agente)/telaPrincipal");
@@ -85,7 +89,7 @@ export default function Index() {
               )}
             </View>
 
-            <TouchableOpacity onPress={() => router.push("/(usuario)/telaPrincipalUser")} className="bg-[#6A994E] rounded-xl mt-4 py-3 items-center" >
+            <TouchableOpacity onPress={handleSubmit(login)} className="bg-[#6A994E] rounded-xl mt-4 py-3 items-center" >
               {loading ? ( <ActivityIndicator color="#fff" /> ) : ( <Text className="text-white font-bold">ENTRAR</Text> )}
             </TouchableOpacity>
           </View>

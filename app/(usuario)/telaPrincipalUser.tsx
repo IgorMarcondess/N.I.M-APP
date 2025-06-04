@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import * as Location from "expo-location";
 import Ocorrencias from "@/components/usuario/ocorrencias";
+import { useUser } from "../../components/usuario/userContext";
 
 export default function TelaPrincipalUser() {
   const [nomeUsuario, setNomeUsuario] = useState("Fulano");
+  const { user } = useUser()
   const [localizacao, setLocalizacao] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    setNomeUsuario("Carlos");
+    
 
     const buscarLocalizacao = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -31,7 +33,7 @@ export default function TelaPrincipalUser() {
       <SafeAreaView className="flex-1 bg-white px-6 py-10 items-center">
         <ScrollView contentContainerStyle={{ alignItems: "center" }}>
           <Text className="text-center text-xl font-bold mt-6 text-[#264027]">
-            Bem-vindo {nomeUsuario}!
+            Bem-vindo {user?.nomeUser}!
           </Text>
 
           <TouchableOpacity

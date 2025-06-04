@@ -18,7 +18,7 @@ export default function Cadastro() {
     email: z.string().nonempty("E-mail obrigatório").email("Formato inválido"),
     senha: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
     telefone: z.string().nonempty("Telefone obrigatório"),
-    identificador: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido"),
+    identificador: z.string().nonempty("Nome obrigatório"),
   });
 
   const { control, handleSubmit, formState: { errors } } = useForm({
