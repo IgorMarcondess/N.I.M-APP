@@ -1,0 +1,42 @@
+// src/services/PATCH/patchAtualizarEndereco.ts
+import axios from "axios";
+
+interface AtualizarEnderecoPayload {
+  dataAlerta: string;
+  evento: string;
+  gravidade: string;
+  local: string;
+}
+
+export default async function patchAtualizarEndereco(
+  id: number,
+  novoLocal: string
+): Promise<void> {
+  const payload: AtualizarEnderecoPayload = {
+    dataAlerta: new Date().toISOString(),
+    evento: "endereco atualizado",
+    gravidade: "moderada",
+    local: novoLocal,
+  };
+
+  try {
+    const response = await axios.patch(
+      `http://192.168.15.10:8080/alerta/${id}/atualizar`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 200 || response.status === 204) {
+      console.log("✅ Endereço atualizado com sucesso");
+    } else {
+      console.warn("⚠️ Alerta atualizado, mas com status inesperado:", response.status);
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar endereço do alerta:", error);
+    throw error;
+  }
+}

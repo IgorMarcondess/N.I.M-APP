@@ -61,8 +61,8 @@ export default function CriarOcorrencia() {
 
     obterLocalizacaoEAtualizarCampos();
   }, []);
-  let id = 10;
 
+  let id = 10;
   const gerarId = () => {
     return id++;
   };

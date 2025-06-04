@@ -36,6 +36,12 @@ export default function TelaPrincipal(){
           <Text className="font-bold">Igor Gabriel Pereira</Text>
           <Text className="font-bold">CPF : 547.***.***-35</Text>
         </View>
+        <TouchableOpacity
+            className="bg-white border border-[#264027] py-3 px-10 rounded-xl mt-6 mb-6 self-center"
+            onPress={() => router.push("/(agente)/criarSensor")}
+          >
+            <Text className="text-[#264027] font-bold">CRIAR SENSOR DE MONITORAMENTO</Text>
+          </TouchableOpacity>
 
        <View className="overflow-hidden rounded-xl h-80 mb-3">
           {localizacao ? (
@@ -56,13 +62,13 @@ export default function TelaPrincipal(){
           )}
         </View>
 
-        <View className="flex-row justify-between mb-6 px-2">
-        <TouchableOpacity className="bg-white rounded-xl items-center justify-center w-[48%] h-32" onPress={() => router.push("/(agente)/ocorrencia")}>
+        <View className="flex-row justify-center mb-6 px-2">
+        {/* <TouchableOpacity className="bg-white rounded-xl items-center justify-center w-[48%] h-32" onPress={() => router.push("/(agente)/ocorrencia")}>
             <Icon name="database" size={32} color="#264027" />
             <Text className="font-bold text-center mt-2 text-[#264027]">
             HISTÓRICO DE{"\n"}OCORRÊNCIAS
             </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity   onPress={() => router.push("/(agente)/monitoramento")}
       className="bg-white rounded-xl items-center justify-center w-[48%] h-32">
