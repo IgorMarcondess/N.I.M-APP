@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
-import { Text, View, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Text, View, TouchableOpacity, ScrollView, SafeAreaView, Alert } from "react-native";
 import * as Location from "expo-location";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../components/input";
 import { router } from "expo-router";
+import CriarOcorrenciaAPI from "@/services/POST/postCriarOcorrencia";
+import {useUser} from "../../components/usuario/userContext"
 
-// Regex simples para validar CPF com 11 dígitos
 const cpfRegex = /^\d{11}$/;
 
 const schema = z.object({
@@ -23,12 +24,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function CriarOcorrencia() {
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormData>({
+  const { user } = useUser()
+
+  const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       endereco: "",
@@ -63,9 +61,41 @@ export default function CriarOcorrencia() {
 
     obterLocalizacaoEAtualizarCampos();
   }, []);
+  let id = 10;
 
-  const onSubmit = (data: FormData) => {
-    console.log("Dados enviados:", data);
+  const gerarId = () => {
+    return id++;
+  };
+
+  const onSubmit = async (data: FormData) => {
+    const infoData = new Date();
+    const horario = infoData.toTimeString().split(" ")[0];
+
+   const userData = {
+      id: gerarId(),
+      data: "2025-06-01",
+      horario: horario,
+      cidade: `${data.endereco}/${data.cidade}`,
+      estado: data.estado,
+      ocorrencia: data.observacao,
+      finalizado: true,
+      resolucao: "em analise",
+    };
+
+    try {
+      if (!user?.cpfUser) {
+        Alert.alert("Erro", "Usuário não identificado. Faça login novamente.");
+        return;
+      }
+      
+      await CriarOcorrenciaAPI(userData, user.cpfUser);
+      console.log("Ocorrência enviada com sucesso!");
+      Alert.alert("Sucesso", "Ocorrência registrada com sucesso.");
+      router.push("/telaPrincipalUser");
+    } catch (error) {
+      console.error("Erro ao enviar ocorrência:", error);
+      Alert.alert("Erro", "Não foi possível registrar a ocorrência.");
+    }
   };
 
   return (
@@ -144,17 +174,13 @@ export default function CriarOcorrencia() {
           />
 
           <View className="flex-row w-[95%] justify-between mt-24">
-            <TouchableOpacity
-              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={() => router.push("./")}
-            >
+            <TouchableOpacity className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
+              onPress={() => router.push("/(usuario)/telaPrincipalUser")}>
               <Text className="text-white font-bold">Voltar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={handleSubmit(onSubmit)}
-            >
+            <TouchableOpacity className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
+              onPress={handleSubmit(onSubmit)}>
               <Text className="text-white font-bold">Finalizar</Text>
             </TouchableOpacity>
           </View>

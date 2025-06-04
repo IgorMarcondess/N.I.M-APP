@@ -52,7 +52,7 @@ export default function Cadastro() {
       });
 
       setIsModal(true);
-      router.replace("./");
+      router.replace("/(cadastro)/cadastro");
     } catch (error: any) {
       console.error("Erro ao criar conta:", error);
       let mensagem = "Erro ao criar conta.";

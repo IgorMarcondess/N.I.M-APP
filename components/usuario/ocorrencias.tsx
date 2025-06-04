@@ -1,62 +1,68 @@
 import { Text, TouchableOpacity, View, Modal } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import GetAlertaUser from "../../services/GET/getAlertasUser";
+import { AlertaPorCpf } from "../../services/GET/getAlertasUser";
+import { useUser } from "./userContext";
 
 export default function Ocorrencias() {
+  const { user } = useUser();
+  const [ocorrencias, setOcorrencias] = useState<AlertaPorCpf[]>([]);
+  const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [enderecoSelecionado, setEnderecoSelecionado] = useState<string | null>(null);
 
-  const dadosOcorrencias = [
-    {
-      endereco: "Rua Dona Albertina Domingues",
-      cidade: "Cantareira",
-      estado: "SP",
-      observacao: "Deslizamento de terra na Rodovia Ayrton Senna",
-    },
-    {
-      endereco: "Av. Atlântica, 2000",
-      cidade: "Rio de Janeiro",
-      estado: "RJ",
-      observacao: "Alagamento próximo ao túnel.",
-    },
-    {
-      endereco: "Rua das Palmeiras, 45",
-      cidade: "Belo Horizonte",
-      estado: "MG",
-      observacao: "Queda de árvore em via pública.",
-    },
-  ];
+  useEffect(() => {
+  const carregarOcorrencias = async () => {
+    if (!user?.cpfUser) return;
 
-  return (
+    try {
+      const resposta = await GetAlertaUser(user.cpfUser); // já vem como array direto
+      setOcorrencias(resposta);
+    } catch (error) {
+      console.error("Erro ao carregar ocorrências:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  carregarOcorrencias();
+  }, [user]);
+
+   return (
     <>
-      {dadosOcorrencias.map((data) => (
-        <View
-          key={data.endereco}
-          className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-4 shadow-sm items-center mb-4 w-[90%] h-[200px]"
-        >
-          <Text className="font-bold">ENDEREÇO:</Text>
-          <Text className="text-[#264027] font-medium mb-2 text-center">{data.endereco}</Text>
+      {ocorrencias.map((data) => {
+        const [endereco, cidade] = data.cidade.split("/");
 
-          <View className="flex-row mb-2">
-            <Text className="font-bold">CIDADE: </Text>
-            <Text className="text-[#264027] mr-4">{data.cidade}</Text>
-            <Text className="font-bold">ESTADO: </Text>
-            <Text className="text-[#264027]">{data.estado}</Text>
-          </View>
-
-          <Text className="font-bold mb-1">OBSERVAÇÃO:</Text>
-          <Text className="text-center text-[#264027] font-medium mb-3">{data.observacao}</Text>
-
-          <TouchableOpacity
-            className="border border-[#B9D6B8] rounded-full py-1 px-6"
-            onPress={() => {
-              setEnderecoSelecionado(data.endereco);
-              setMostrarModal(true);
-            }}
+        return (
+          <View
+            key={data.id}
+            className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-4 shadow-sm items-center mb-4 w-[90%] h-[200px]"
           >
-            <Text className="text-[#8AC185] font-bold">EDITAR ENDEREÇO</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+            <Text className="font-bold">ENDEREÇO:</Text>
+            <Text className="text-[#264027] font-medium mb-2 text-center">{endereco}</Text>
+
+            <View className="flex-row mb-2">
+              <Text className="font-bold">CIDADE: </Text>
+              <Text className="text-[#264027] mr-4">{cidade}</Text>
+              <Text className="font-bold">ESTADO: </Text>
+              <Text className="text-[#264027]">{data.estado}</Text>
+            </View>
+
+            <Text className="font-bold mb-1">OBSERVAÇÃO:</Text>
+            <Text className="text-center text-[#264027] font-medium mb-3">{data.ocorrencia}</Text>
+
+            <TouchableOpacity
+              className="border border-[#B9D6B8] rounded-full py-1 px-6"
+              onPress={() => {
+                setEnderecoSelecionado(endereco);
+                setMostrarModal(true);
+              }}
+            >
+              <Text className="text-[#8AC185] font-bold">EDITAR ENDEREÇO</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
 
       {mostrarModal && (
         <Modal transparent animationType="fade">

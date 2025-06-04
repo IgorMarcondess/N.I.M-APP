@@ -38,7 +38,7 @@ export default function TelaPrincipalUser() {
 
           <TouchableOpacity
             className="bg-white border border-[#264027] py-3 px-10 rounded-xl mt-6 self-center"
-            onPress={() => router.push("/")}
+            onPress={() => router.push("/(usuario)/criarOcorrencia")}
           >
             <Text className="text-[#264027] font-bold">CRIAR OCORRÊNCIA</Text>
           </TouchableOpacity>

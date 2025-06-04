@@ -38,30 +38,28 @@ export default function Ocorrencias(){
     return <ActivityIndicator size="large" color="#fff" />;
   }
 
-    return(
-      <>
+  {ocorrencias.map((item) => {
+        const [endereco, cidade] = item.cidade.split("/");
 
-        {ocorrencias.map((item) => (
-            <TouchableOpacity
-              key={item.cidade}
-              className="bg-white rounded-xl p-4 mt-4 w-[90%] self-center items-center"
-            >
-              <Text className="font-bold">SOLICITANTE:</Text>
-              <Text>{item.cidade}</Text>
+        return (
+          <TouchableOpacity
+            key={item.id}
+            className="bg-white rounded-xl p-4 mt-4 w-[90%] self-center items-center"
+          >
+            <Text className="font-bold">ENDEREÇO:</Text>
+            <Text>{endereco}</Text>
 
-              <View className="flex-row mt-2 mb-2">
-                <Text className="font-bold">CIDADE: </Text>
-                <Text>{item.cidade}</Text>
+            <View className="flex-row mt-2 mb-2">
+              <Text className="font-bold">CIDADE: </Text>
+              <Text>{cidade}</Text>
 
-                <Text className="ml-4 font-bold">ESTADO: </Text>
-                <Text>{item.estado}</Text>
-              </View>
+              <Text className="ml-4 font-bold">ESTADO: </Text>
+              <Text>{item.estado}</Text>
+            </View>
 
-              <Text className="font-bold mt-2">OCORRÊNCIA:</Text>
-              <Text>{item.ocorrencia}</Text>
-            </TouchableOpacity>
-          ))}
-
-      </>
-    )
+            <Text className="font-bold mt-2">OCORRÊNCIA:</Text>
+            <Text>{item.ocorrencia}</Text>
+          </TouchableOpacity>
+        );
+      })}
 }
