@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView, SafeAreaView, Alert, ActivityIndicator } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { z } from "zod";
 import { Input } from "../../components/input";
 import postCriarSensor from "../../services/POST/postCriarSensor";
-import { router } from "expo-router";
 
 const schema = z.object({
   local: z.string().min(1, "Local é obrigatório"),
@@ -27,7 +27,7 @@ export default function FormMonitoramento() {
 
   const [loading, setLoading] = useState(false);
 
-    let id = 1;
+  let id = 1;
   const gerarId = () => {
     return id++;
   };
@@ -57,75 +57,75 @@ export default function FormMonitoramento() {
 
   return (
     <SafeAreaView className="bg-[#264027] flex-1 items-center justify-center">
-    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: 32 }}>
-      <View className="items-center justify-center w-full">
-        <Text className="text-white font-bold text-2xl mb-6">MONITORAMENTO</Text>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: 32 }}>
+        <View className="items-center justify-center w-full">
+          <Text className="text-white font-bold text-2xl mb-6">MONITORAMENTO</Text>
 
-        <View className="w-[100%] mb-4">
-          <Text className="text-white font-semibold mb-1">LOCAL</Text>
-          <Controller
-            control={control}
-            name="local"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Input text="LOCAL" value={value} onChangeText={onChange} />
-                {errors.local && <Text className="text-red-500">{errors.local.message}</Text>}
-              </>
-            )}
-          />
+          <View className="w-[100%] mb-4">
+            <Text className="text-white font-semibold mb-1">LOCAL</Text>
+            <Controller
+              control={control}
+              name="local"
+              render={({ field: { onChange, value } }) => (
+                <>
+                  <Input text="LOCAL" value={value} onChangeText={onChange} />
+                  {errors.local && <Text className="text-red-500">{errors.local.message}</Text>}
+                </>
+              )}
+            />
+          </View>
+
+          <View className="w-[100%] mb-4">
+            <Text className="text-white font-semibold mb-1">UMIDADE</Text>
+            <Controller
+              control={control}
+              name="umidade"
+              render={({ field: { onChange, value } }) => (
+                <>
+                  <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                  {errors.umidade && <Text className="text-red-500">{errors.umidade.message}</Text>}
+                </>
+              )}
+            />
+          </View>
+
+          <View className="w-[100%] mb-4">
+            <Text className="text-white font-semibold mb-1">TEMPERATURA</Text>
+            <Controller
+              control={control}
+              name="temperatura"
+              render={({ field: { onChange, value } }) => (
+                <>
+                  <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                  {errors.temperatura && <Text className="text-red-500">{errors.temperatura.message}</Text>}
+                </>
+              )}
+            />
+          </View>
+
+          <View className="flex-row w-[90%] justify-between mt-10">
+            <TouchableOpacity
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center"
+              onPress={() => router.push("./")}
+              disabled={loading}
+            >
+              <Text className="text-white font-bold">VOLTAR</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
+              onPress={handleSubmit(onSubmit)}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-bold">ENVIAR</Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
-
-        <View className="w-[100%] mb-4">
-          <Text className="text-white font-semibold mb-1">UMIDADE</Text>
-          <Controller
-            control={control}
-            name="umidade"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" />
-                {errors.umidade && <Text className="text-red-500">{errors.umidade.message}</Text>}
-              </>
-            )}
-          />
-        </View>
-
-        <View className="w-[100%] mb-4">
-          <Text className="text-white font-semibold mb-1">TEMPERATURA</Text>
-          <Controller
-            control={control}
-            name="temperatura"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" />
-                {errors.temperatura && <Text className="text-red-500">{errors.temperatura.message}</Text>}
-              </>
-            )}
-          />
-        </View>
-
-        <View className="flex-row w-[90%] justify-between mt-10">
-          <TouchableOpacity
-            className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center"
-            onPress={() => router.push("")}
-            disabled={loading}
-          >
-            <Text className="text-white font-bold">VOLTAR</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-            onPress={handleSubmit(onSubmit)}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-bold">ENVIAR</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
-  </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
