@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../components/input";
 import postCriarSensor from "../../services/POST/postCriarSensor";
+import { router } from "expo-router";
 
 const schema = z.object({
   local: z.string().min(1, "Local é obrigatório"),
@@ -55,11 +56,12 @@ export default function FormMonitoramento() {
   };
 
   return (
-    <SafeAreaView className="bg-[#264027] flex-1 items-center py-2 justify-center">
-      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: 32 }}>
-        <View className="items-center justify-center w-full px-4">
-          <Text className="text-white font-bold text-2xl mb-6">MONITORAMENTO</Text>
+    <SafeAreaView className="bg-[#264027] flex-1 items-center justify-center">
+    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: 32 }}>
+      <View className="items-center justify-center w-full">
+        <Text className="text-white font-bold text-2xl mb-6">MONITORAMENTO</Text>
 
+        <View className="w-[100%] mb-4">
           <Text className="text-white font-semibold mb-1">LOCAL</Text>
           <Controller
             control={control}
@@ -67,37 +69,51 @@ export default function FormMonitoramento() {
             render={({ field: { onChange, value } }) => (
               <>
                 <Input text="LOCAL" value={value} onChangeText={onChange} />
-                {errors.local && <Text className="text-red-500 mb-2">{errors.local.message}</Text>}
+                {errors.local && <Text className="text-red-500">{errors.local.message}</Text>}
               </>
             )}
           />
+        </View>
 
-          <Text className="text-white font-semibold mb-1">DATA</Text>
+        <View className="w-[100%] mb-4">
+          <Text className="text-white font-semibold mb-1">UMIDADE</Text>
           <Controller
             control={control}
             name="umidade"
             render={({ field: { onChange, value } }) => (
               <>
-                <Input text="UMIDADE" value={value} onChangeText={onChange} keyboardType="numeric"/>
-                {errors.data && <Text className="text-red-500 mb-2">{errors.data.message}</Text>}
+                <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                {errors.umidade && <Text className="text-red-500">{errors.umidade.message}</Text>}
               </>
             )}
           />
+        </View>
 
+        <View className="w-[100%] mb-4">
           <Text className="text-white font-semibold mb-1">TEMPERATURA</Text>
           <Controller
             control={control}
             name="temperatura"
             render={({ field: { onChange, value } }) => (
               <>
-                <Input text="TEMPERATURA" value={value} onChangeText={onChange} keyboardType="numeric" />
-                {errors.temperatura && <Text className="text-red-500 mb-2">{errors.temperatura.message}</Text>}
+                <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                {errors.temperatura && <Text className="text-red-500">{errors.temperatura.message}</Text>}
               </>
             )}
           />
+        </View>
+
+        <View className="flex-row w-[90%] justify-between mt-10">
+          <TouchableOpacity
+            className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center"
+            onPress={() => router.push("")}
+            disabled={loading}
+          >
+            <Text className="text-white font-bold">VOLTAR</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-transparent border border-lime-400 rounded-full py-3 px-8 mt-10 items-center"
+            className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
             onPress={handleSubmit(onSubmit)}
             disabled={loading}
           >
@@ -108,7 +124,8 @@ export default function FormMonitoramento() {
             )}
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
+  </SafeAreaView>
   );
 }
