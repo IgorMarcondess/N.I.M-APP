@@ -106,7 +106,7 @@ export default function FormMonitoramento() {
           <View className="flex-row w-[90%] justify-between mt-10">
             <TouchableOpacity
               className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center"
-              onPress={() => router.push("./")}
+              onPress={() => router.push("/(agente)/telaPrincipal")}
               disabled={loading}
             >
               <Text className="text-white font-bold">VOLTAR</Text>

@@ -1,92 +1,123 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useOcorrencia } from "../../components/ocorrenciaContext";
+import { router } from "expo-router";
+import axios from "axios";
 
+const schema = z.object({
+  resolucao: z.string().min(5, "A resolução deve ter pelo menos 5 caracteres"),
+});
 
-export default function Ocorrencia(){
+type FormData = z.infer<typeof schema>;
 
-    const [modalVisible, setModalVisible] = useState(false);
-    const [descricao, setDescricao] = useState('');
+export default function FinalizarOcorrencia() {
+  const { ocorrenciaSelecionada } = useOcorrencia();
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      resolucao: "",
+    },
+  });
 
-    const latitude = -23.45678;
-    const longitude = -46.56789;
+  const onSubmit = async (data: FormData) => {
 
-    const handleFinalizar = () => {
-      if (!descricao.trim()) {
-        Alert.alert('Erro', 'Por favor, descreva a finalização do chamado.');
-        return;
-      }
+    if (!ocorrenciaSelecionada) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Carregando dados da ocorrência...</Text>
+      </View>
+    );
+  }
 
-      console.log('Solução da ocorrência: ', descricao);
-      setModalVisible(false);
-      setDescricao('');
-      Alert.alert('Sucesso', 'Ocorrência finalizada com sucesso!');
-    };
+  const dadosAtualizados = {
+  id: ocorrenciaSelecionada.id,
+  data: ocorrenciaSelecionada.data,
+  horario: ocorrenciaSelecionada.horario,
+  cidade: ocorrenciaSelecionada.cidade,
+  estado: ocorrenciaSelecionada.estado,
+  ocorrencia: ocorrenciaSelecionada.ocorrencia,
+  resolucao: data.resolucao,
+  finalizado: true,
+};
+
+  try {
+  const response = await axios.put( `http://192.168.15.10:8080/alerta/${ocorrenciaSelecionada.id}`, dadosAtualizados,);
+
+  console.log("Ocorrência finalizada com sucesso!");
+  router.push("/(agente)/telaPrincipal");
+} catch (error) {
+  console.error("Erro ao finalizar ocorrência:", error);
+}
+
+    router.push("/(agente)/telaPrincipal");
+  };
+
+  if (!ocorrenciaSelecionada) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Carregando dados da ocorrência...</Text>
+      </View>
+    );
+  }
+  const [endereco, cidade] = ocorrenciaSelecionada.cidade.split("/");
 
   return (
-        <SafeAreaView className="flex-1 bg-white px-4 pt-8 items-center">
-      <Text className="text-2xl font-bold text-green-900 mb-4 text-center">OCORRÊNCIA</Text>
+    <SafeAreaView className="bg-[#264027] flex-1">
+      <ScrollView contentContainerStyle={{ alignItems: "center", padding: 20 }}>
+        <Text className="text-white text-2xl font-bold mb-16">DETALHES DA OCORRÊNCIA</Text>
 
-      <View className='justify-center items-center'>
-        <Text className="font-bold text-lg">SOLICITANTE:</Text>
-        <Text className="text-lg mb-1">EDUARDO RODRIGUES ANDRADE</Text>
+        <Text className="text-white font-bold mb-2">LOCAL</Text>
+        <TextInput value={endereco} editable={false} className="border border-white text-white rounded-md h-14 w-full px-3 py-2 mb-3" />
 
-        <View className="flex-row justify-between mb-1 gap-6 ">
-          <View className='flex-row w-52 h-30'>
-            <Text className="font-bold text-lg">CIDADE: </Text>
-            <Text className="text-lg ">São Bernardo dos Campos</Text>
+        <View className="flex-row w-full justify-between items-center mb-3">
+          <View className="flex-1 mr-2 items-center">
+            <Text className="text-white font-bold mb-2">CIDADE</Text>
+            <TextInput value={cidade} editable={false} className="border border-white text-white w-full h-12 rounded-md px-3 py-2" />
           </View>
-          <View className='flex-row'>
-            <Text className="font-bold text-lg">ESTADO: </Text>
-            <Text className="text-lg">São Paulo</Text>
-          </View>
-        </View>
-
-        <Text className="font-bold mt-2 text-lg">OCORRÊNCIA:</Text>
-        <Text className="text-lg mb-4">Queimada com fogo chegando perto das casa</Text>
-      </View>
-
-      <View className="rounded-xl overflow-hidden h-64 mb-4 w-full bg-gray-200">
-        <MapView className="flex-1" initialRegion={{ latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}>
-          <Marker coordinate={{ latitude, longitude }} title="Local da ocorrência" />
-        </MapView>
-      </View>
-
-      <View className="flex-row justify-center mb-6 px-2 gap-6">
-        <Text className="text-center text-xs">LATITUDE{"\n"}{latitude}</Text>
-        <Text className="text-center text-xs">LONGITUDE{"\n"}{longitude}</Text>
-      </View>
-
-      {/* BOTÃO PARA ABRIR O MODAL */}
-      <TouchableOpacity className="border border-green-900 px-6 py-2 rounded-xl mb-3 items-center w-96 mt-6" onPress={() => setModalVisible(true)}>
-        <Text className="text-green-900 font-bold">FINALIZAR OCORRÊNCIA</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity className="bg-green-900 px-10 py-2 rounded-full w-44 h-12 justify-center items-center mt-36">
-        <Text className="text-white font-bold">Voltar</Text>
-      </TouchableOpacity>
-
-      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View className="flex-1 justify-center items-center bg-opacity-10">
-          <View className="bg-[#2F4F4F] w-11/12 rounded-xl p-6 items-center">
-            <Text className="text-white text-xl font-bold mb-4">FINALIZAR OCORRÊNCIA?</Text>
-
-            <TextInput placeholder="Descreva a finalização do chamado aqui!" placeholderTextColor="#999" multiline numberOfLines={4} 
-            className="bg-white w-full rounded-lg p-3 text-black mb-4" value={descricao} onChangeText={setDescricao}/>
-
-            <View className="flex-row justify-between w-full mt-2">
-              <TouchableOpacity className="bg-white px-6 py-2 rounded-md w-1/2 mr-2" onPress={() => setModalVisible(false)} >
-                <Text className="text-green-900 font-bold text-center">VOLTAR</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity className="bg-white px-6 py-2 rounded-md w-1/2 ml-2" onPress={handleFinalizar} >
-                <Text className="text-green-900 font-bold text-center">FINALIZAR</Text>
-              </TouchableOpacity>
-            </View>
+          <View className="flex-1 ml-2 items-center">
+            <Text className="text-white font-bold mb-2">ESTADO</Text>
+            <TextInput value={ocorrenciaSelecionada.estado} editable={false} className="border border-white text-white w-full h-12 rounded-md px-3 py-2" />
           </View>
         </View>
-      </Modal>
+
+        <Text className="text-[#264027] font-semibold">TEMPERATURA</Text>
+        <TextInput value={"27°C"} editable={false} className="border border-white rounded-md text-white w-full h-14 px-3 py-2 mb-3" />
+
+        <Text className="text-white font-bold mb-2">DESCRIÇÃO</Text>
+        <TextInput value={ocorrenciaSelecionada.ocorrencia} multiline editable={false} className="border border-white text-white rounded-md w-full px-3 py-2 mb-3 h-20" />
+
+        <Text className="text-white font-bold mb-2">RESOLUÇÃO</Text>
+        <Controller
+          control={control}
+          name="resolucao"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              className="border  border-white text-white rounded-md w-full px-3 py-2 mb-2"
+              placeholder="Digite a resolução"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
+        {errors.resolucao && <Text className="text-red-500 mb-2">{errors.resolucao.message}</Text>}
+
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmit)}
+          className="border border-lime-400 px-4 py-3 rounded-full w-full items-center mt-20 mb-3"
+        >
+          <Text className="text-lime-400 font-bold">FINALIZAR OCORRÊNCIA</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="border border-lime-400 px-4 py-3 rounded-full w-full mt-4 items-center"
+        >
+          <Text className="text-lime-400 font-bold">VOLTAR</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
-  )
+  );
 }

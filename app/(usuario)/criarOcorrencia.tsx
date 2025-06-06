@@ -72,7 +72,7 @@ export default function CriarOcorrencia() {
     const horario = infoData.toTimeString().split(" ")[0];
 
    const userData = {
-      id: gerarId(),
+      id: 1,
       data: "2025-06-01",
       horario: horario,
       cidade: `${data.endereco}/${data.cidade}`,

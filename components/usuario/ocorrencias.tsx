@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import GetAlertaUser from "../../services/GET/getAlertasUser";
 import { AlertaPorCpf } from "../../services/GET/getAlertasUser";
 import { useUser } from "./userContext";
+import axios from "axios";
 
 export default function Ocorrencias() {
   const { user } = useUser();
   const [ocorrencias, setOcorrencias] = useState<AlertaPorCpf[]>([]);
+  const [idSelecionado, setIdSelecionado] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [enderecoSelecionado, setEnderecoSelecionado] = useState<string | null>(null);
 
   useEffect(() => {
   const carregarOcorrencias = async () => {
@@ -27,6 +28,18 @@ export default function Ocorrencias() {
 
   carregarOcorrencias();
   }, [user]);
+
+  const ExcluirOcorrencia = async () => {
+    try {
+      await axios.delete(`http://192.168.15.10:8080/alerta/${idSelecionado}`);
+      console.log(`Ocorrência com id ${idSelecionado} excluída com sucesso!`);
+
+      setMostrarModal(false);
+
+    } catch (error) {
+      console.error("Erro ao excluir ocorrência:", error);
+    }
+  };
 
    return (
     <>
@@ -52,56 +65,52 @@ export default function Ocorrencias() {
             <Text className="text-center text-[#264027] font-medium mb-3">{data.ocorrencia}</Text>
 
             <TouchableOpacity
-              className="border border-[#B9D6B8] rounded-full py-1 px-6"
+              className="border border-[#FC0000] rounded-full py-1 px-6"
               onPress={() => {
-                setEnderecoSelecionado(endereco);
+                setIdSelecionado(data.id);
                 setMostrarModal(true);
               }}
             >
-              <Text className="text-[#8AC185] font-bold">EDITAR ENDEREÇO</Text>
+              <Text className="text-[#FC0000] font-bold">EXCLUIR OCORRÊNCIA</Text>
             </TouchableOpacity>
           </View>
         );
       })}
 
       {mostrarModal && (
-        <Modal transparent animationType="fade">
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-6 w-[90%] items-center">
-              <Text className="text-red-600 font-bold text-4xl mb-4">Atenção!</Text>
-              <Text className="text-center text-[#264027] font-medium mb-8">
-                Você está ciente de que alterar o endereço pode aumentar o tempo de resposta do agente para resolver a situação
-              </Text>
+          <Modal transparent animationType="fade">
+            <View className="flex-1 justify-center items-center bg-black/50">
+              <View className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-6 w-[90%] items-center">
+                <Text className="text-red-600 font-bold text-4xl mb-4">Atenção!</Text>
+                <Text className="text-center text-[#264027] font-medium mb-8">
+                  Você tem ciência de que excluir esta ocorrência pode atrasar a identificação e o tratamento de casos realmente graves, certo?
+                </Text>
 
-              <View className="w-full h-10 border border-[#B9D6B8] rounded-full mb-4 justify-center px-4">
-                <Text className="text-[#264027]">{enderecoSelecionado}</Text>
-              </View>
+                <View className="flex-row justify-between w-full">
+                  {/* BOTÃO VOLTAR - VERDE */}
+                  <TouchableOpacity
+                    className="flex-1 py-2 mr-2 items-center border border-green-600 rounded-md bg-white"
+                    onPress={() => {
+                      setMostrarModal(false);
+                    }}
+                  >
+                    <Text className="text-green-700 font-bold">VOLTAR</Text>
+                  </TouchableOpacity>
 
-              <View className="flex-row justify-between w-full">
-                <TouchableOpacity
-                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center"
-                  onPress={() => {
-                    setEnderecoSelecionado(null);
-                    setMostrarModal(false);
-                  }}
-                >
-                  <Text className="text-[#264027] font-bold">VOLTAR</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center"
-                  onPress={() => {
-                    console.log(`Alterado: ${enderecoSelecionado}`);
-                    setEnderecoSelecionado(null);
-                    setMostrarModal(false);
-                  }}
-                >
-                  <Text className="text-[#264027] font-bold">ALTERAR</Text>
-                </TouchableOpacity>
+                  {/* BOTÃO EXCLUIR - VERMELHO */}
+                  <TouchableOpacity
+                    className="flex-1 py-2 ml-2 items-center border border-red-600 rounded-md bg-white"
+                    onPress={() => {
+                        ExcluirOcorrencia()
+                    }}
+                  >
+                    <Text className="text-red-600 font-bold">EXCLUIR</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+
       )}
     </>
   );

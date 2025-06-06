@@ -175,7 +175,7 @@ export default function CriarOcorrencia() {
 
           <View className="flex-row w-[95%] justify-between mt-24">
             <TouchableOpacity className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={() => router.push("/(usuario)/telaPrincipalUser")}>
+              onPress={() => router.push("/(agente)/telaPrincipal")}>
               <Text className="text-white font-bold">Voltar</Text>
             </TouchableOpacity>
 
