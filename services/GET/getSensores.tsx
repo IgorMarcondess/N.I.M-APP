@@ -1,4 +1,3 @@
-// services/GET/getMonitoramentos.ts
 import axios from "axios";
 
 export type Monitoramento = {

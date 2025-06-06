@@ -6,6 +6,7 @@ import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, TouchableOpac
 import { z } from "zod";
 import { Input } from "../../components/input";
 import postCriarSensor from "../../services/POST/postCriarSensor";
+import ModalSucesso from "../../components/modalSucesso";
 
 const schema = z.object({
   local: z.string().min(1, "Local é obrigatório"),
@@ -15,7 +16,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function FormMonitoramento() {
+export default function CriarSensor() {
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -26,11 +27,13 @@ export default function FormMonitoramento() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   let id = 1;
   const gerarId = () => {
     return id++;
   };
+
   const onSubmit = async (data: FormData) => {
     const infoData = new Date();
     const horario = infoData.toTimeString().split(" ")[0];
@@ -46,8 +49,9 @@ export default function FormMonitoramento() {
         umidade: data.umidade,
         vento: 0,
       };
+
       await postCriarSensor(userData);
-      Alert.alert("Sucesso", "Monitoramento enviado com sucesso!");
+      setMostrarModal(true);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível enviar o monitoramento.");
     } finally {
@@ -63,37 +67,28 @@ export default function FormMonitoramento() {
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">LOCAL</Text>
-            <Controller
-              control={control}
-              name="local"
+            <Controller control={control} name="local"
               render={({ field: { onChange, value } }) => (
                 <>
                   <Input text="LOCAL" value={value} onChangeText={onChange} />
                   {errors.local && <Text className="text-red-500">{errors.local.message}</Text>}
-                </>
-              )}
-            />
+                </>)}/>
           </View>
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">UMIDADE</Text>
-            <Controller
-              control={control}
-              name="umidade"
+            <Controller control={control} name="umidade"
               render={({ field: { onChange, value } }) => (
                 <>
                   <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" />
                   {errors.umidade && <Text className="text-red-500">{errors.umidade.message}</Text>}
                 </>
-              )}
-            />
+              )}/>
           </View>
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">TEMPERATURA</Text>
-            <Controller
-              control={control}
-              name="temperatura"
+            <Controller control={control} name="temperatura"
               render={({ field: { onChange, value } }) => (
                 <>
                   <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" />
@@ -104,28 +99,18 @@ export default function FormMonitoramento() {
           </View>
 
           <View className="flex-row w-[90%] justify-between mt-10">
-            <TouchableOpacity
-              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center"
-              onPress={() => router.push("/(agente)/telaPrincipal")}
-              disabled={loading}
-            >
+            <TouchableOpacity disabled={loading} className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center">
               <Text className="text-white font-bold">VOLTAR</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={handleSubmit(onSubmit)}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text className="text-white font-bold">ENVIAR</Text>
-              )}
+            <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={loading}
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center">
+              {loading ? ( <ActivityIndicator color="#fff" /> ) : ( <Text className="text-white font-bold">ENVIAR</Text>)}
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      {mostrarModal && <ModalSucesso visible={mostrarModal} />}
     </SafeAreaView>
   );
 }

@@ -1,6 +1,6 @@
 import { Input } from "../../components/input";
 import { useState } from "react";
-import { Alert, ImageBackground, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import CriarUsuario from "../../services/POST/postCriarUsuario";
 
 export default function Cadastro() {
   const [isModal, setIsModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const schema = z.object({
     nome: z.string().nonempty("Nome obrigatório"),
@@ -33,26 +34,26 @@ export default function Cadastro() {
   });
 
   const criacaoDeConta = async (data: any) => {
+    setIsLoading(true);
     try {
-      const infoUsuario = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.senha
-      );
+      const infoUsuario = await createUserWithEmailAndPassword( auth, data.email, data.senha );
       const user = infoUsuario.user;
       console.log("Usuário criado:", user.uid);
 
-      await CriarUsuario({
-        cpfUser: data.identificador,
-        nomeUser: data.nome,
-        sobrenomeUser: "Sobrenome Fixo",
-        telefoneUser: data.telefone,
-        dataNascimentoUser: "2025-06-03",
-        emailUser: data.email,
-      });
+      // await CriarUsuario({
+      //   cpfUser: data.identificador,
+      //   nomeUser: data.nome,
+      //   sobrenomeUser: "Sobrenome Fixo",
+      //   telefoneUser: data.telefone,
+      //   dataNascimentoUser: "2025-06-03",
+      //   emailUser: data.email,
+      // });
 
       setIsModal(true);
-      router.replace("/(cadastro)/cadastro");
+      setTimeout(() => {
+        router.push("/");
+      }, 5000);
+
     } catch (error: any) {
       console.error("Erro ao criar conta:", error);
       let mensagem = "Erro ao criar conta.";
@@ -60,6 +61,8 @@ export default function Cadastro() {
         mensagem = "E-mail já está em uso.";
       }
       Alert.alert("Desculpa! Erro ao criar conta", mensagem);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,23 +74,23 @@ export default function Cadastro() {
         <View className="items-center space-y-1">
           <Text className="text-white font-semibold mb-1 mt-4">NOME</Text>
           <Controller control={control} name="nome"
-            render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value } }) => (
               <Input value={value} onChangeText={onChange} text="Nome" />
-            )} />
+              )}/>
           {errors.nome && <Text className="text-red-500">{errors.nome.message}</Text>}
 
           <Text className="text-white font-semibold mb-1">E-MAIL</Text>
           <Controller control={control} name="email"
             render={({ field: { onChange, value } }) => (
-              <Input value={value} onChangeText={onChange} keyboardType="email-address" text="E-mail" autoCapitalize="none" />
-            )} />
+              <Input value={value} onChangeText={onChange} keyboardType="email-address" text="E-mail" autoCapitalize="none"/>
+            )}/>
           {errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
 
           <Text className="text-white font-semibold mb-1">SENHA</Text>
           <Controller control={control} name="senha"
             render={({ field: { onChange, value } }) => (
               <Input value={value} onChangeText={onChange} text="Senha" secureTextEntry />
-            )} />
+            )}/>
           {errors.senha && <Text className="text-red-500">{errors.senha.message}</Text>}
 
           <Text className="text-white font-semibold mb-1">TELEFONE</Text>
@@ -101,21 +104,25 @@ export default function Cadastro() {
           <Controller control={control} name="identificador"
             render={({ field: { onChange, value } }) => (
               <Input value={value} onChangeText={onChange} text="CPF" keyboardType="numeric" />
-            )} />
+            )}/>
           {errors.identificador && <Text className="text-red-500">{errors.identificador.message}</Text>}
         </View>
 
         <View className="flex-row justify-between mt-6 px-4">
-          <TouchableOpacity className="bg-gray-400 py-3 px-6 rounded-xl" onPress={() => router.back()}>
-            <Text className="text-white font-bold">Voltar</Text>
+          <TouchableOpacity className={`py-3 px-6 rounded-xl ${isLoading ? 'bg-gray-300' : 'bg-gray-400'}`}
+            onPress={() => router.back()} disabled={isLoading}>
+
+            <Text className="text-white font-bold">VOLTAR</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="bg-[#6A994E] py-3 px-6 rounded-xl" onPress={handleSubmit(criacaoDeConta)}>
-            <Text className="text-white font-bold">Próximo</Text>
+          <TouchableOpacity className={`py-3 px-6 rounded-xl ${isLoading ? 'bg-lime-300' : 'bg-[#6A994E]'}`}
+            onPress={handleSubmit(criacaoDeConta)} disabled={isLoading}>
+
+            {isLoading ? ( <ActivityIndicator color="#fff" /> ) : ( <Text className="text-white font-bold">REGISTRAR</Text> )}
           </TouchableOpacity>
         </View>
       </View>
-      {isModal && <ModalSucesso />}
+      {isModal && <ModalSucesso visible={isModal} />}
     </SafeAreaView>
   );
 }

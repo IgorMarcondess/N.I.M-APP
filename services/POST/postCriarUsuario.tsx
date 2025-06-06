@@ -1,4 +1,3 @@
-// services/POST/postCriarUsuario.ts
 import axios from 'axios';
 
 export interface UserData {

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, Modal } from "react-native";
+import { Text, TouchableOpacity, View, Modal, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import GetAlertas, { Alerta } from "../../services/GET/getAlertas";
 import { useUser } from "../../components/usuario/userContext";
@@ -28,6 +28,23 @@ export default function Ocorrencias() {
     carregarOcorrencias();
   }, []);
 
+    if (loading) {
+      return (
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#264027" />
+          <Text className="mt-4 text-[#264027] font-semibold text-lg">Carregando ocorrências...</Text>
+        </View>
+      );
+    }
+  
+    if (ocorrencias.length === 0) {
+      return (
+        <View className="flex-1 justify-center items-center px-6">
+          <Text className="text-[#264027] font-semibold text-xl text-center"> Nenhuma ocorrência foi aberta!</Text>
+        </View>
+      );
+    }
+
   const abrirOcorrencias = (data: OcorrenciaType) => {
       setOcorrenciaSelecionada(data);
       router.push("/(agente)/ocorrencia")
@@ -39,11 +56,9 @@ export default function Ocorrencias() {
       {ocorrencias.map((data) => {
         const [endereco, cidade] = data.cidade.split("/");
         return (
-          <TouchableOpacity
-            key={data.id}
-            className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-4 shadow-sm items-center mb-4 w-[90%] min-h-[230px]"
-            onPress={() => abrirOcorrencias(data)}
-          >
+          <TouchableOpacity key={data.id} onPress={() => abrirOcorrencias(data)}
+            className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-4 shadow-sm items-center mb-4 w-[90%] min-h-[230px]">
+              
             <Text className="font-bold">ENDEREÇO:</Text>
             <Text className="text-[#264027] font-medium mb-2 text-center">{endereco}</Text>
 
@@ -61,19 +76,8 @@ export default function Ocorrencias() {
             <Text className="text-center text-[#264027] font-medium mb-3">{data.ocorrencia}</Text>
 
             <Text className="font-bold mb-1">STATUS:</Text>
-            <Text className="text-[#264027] mb-3">
-              {data.finalizado ? "Finalizado" : "Em aberto"} {data.resolucao ? `– ${data.resolucao}` : ""}
+            <Text className="text-[#264027] mb-3"> {data.finalizado ? "Finalizado" : "Em aberto"} {data.resolucao ? `– ${data.resolucao}` : ""}
             </Text>
-
-            <TouchableOpacity
-              className="border border-[#B9D6B8] rounded-full py-1 px-6"
-              onPress={() => {
-                setEnderecoSelecionado(endereco);
-                setMostrarModal(true);
-              }}
-            >
-              <Text className="text-[#8AC185] font-bold">EDITAR ENDEREÇO</Text>
-            </TouchableOpacity>
           </TouchableOpacity>
         );
       })}
@@ -92,23 +96,14 @@ export default function Ocorrencias() {
               </View>
 
               <View className="flex-row justify-between w-full">
-                <TouchableOpacity
-                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center"
-                  onPress={() => {
-                    setEnderecoSelecionado(null);
-                    setMostrarModal(false);
-                  }}
-                >
+                <TouchableOpacity onPress={() => { setEnderecoSelecionado(null); setMostrarModal(false);}}
+                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center">
+
                   <Text className="text-[#264027] font-bold">VOLTAR</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center"
-                  onPress={() => {
-                    console.log(`Alterado: ${enderecoSelecionado}`);
-                    setMostrarModal(false);
-                  }}
-                >
+                <TouchableOpacity onPress={() => { console.log(`Alterado: ${enderecoSelecionado}`);setMostrarModal(false);}}
+                  className="bg-white border border-[#B9D6B8] rounded-md flex-1 py-2 mr-2 items-center">
                   <Text className="text-[#264027] font-bold">ALTERAR</Text>
                 </TouchableOpacity>
               </View>

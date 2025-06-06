@@ -36,10 +36,8 @@ export default function TelaPrincipalUser() {
             Bem-vindo {user?.nomeUser}!
           </Text>
 
-          <TouchableOpacity
-            className="bg-white border border-[#264027] py-3 px-10 rounded-xl mt-6 self-center"
-            onPress={() => router.push("/(usuario)/criarOcorrencia")}
-          >
+          <TouchableOpacity onPress={() => router.push("/(usuario)/criarOcorrencia")}
+            className="bg-white border border-[#264027] py-3 px-10 rounded-xl mt-6 self-center">
             <Text className="text-[#264027] font-bold">CRIAR OCORRÊNCIA</Text>
           </TouchableOpacity>
 
@@ -55,17 +53,10 @@ export default function TelaPrincipalUser() {
                   latitudeDelta: 0.01,
                   longitudeDelta: 0.01,
                 }}
-                showsUserLocation
-              >
-                <Marker
-                  coordinate={{
-                    latitude: localizacao.coords.latitude,
-                    longitude: localizacao.coords.longitude,
-                  }}
-                  title="Você está aqui"
-                />
-              </MapView>
-            ) : (
+                showsUserLocation>
+                <Marker coordinate={{ latitude: localizacao.coords.latitude, longitude: localizacao.coords.longitude, }}
+                  title="Você está aqui"/>
+              </MapView> ) : (
               <View className="bg-gray-300 h-full items-center justify-center">
                 <Text className="text-gray-700">
                   {errorMsg || "Carregando localização..."}

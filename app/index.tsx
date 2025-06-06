@@ -38,8 +38,8 @@ export default function Index() {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, senha);
 
-      const usuario = await GetUsuarios(email);
-      setUser(usuario);
+      //const usuario = await GetUsuarios(email);
+      //setUser(usuario);
 
       if (email.includes("@gov.com.br")) {
         router.push("/(agente)/telaPrincipal");
