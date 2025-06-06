@@ -40,14 +40,14 @@ export default function Cadastro() {
       const user = infoUsuario.user;
       console.log("Usuário criado:", user.uid);
 
-      // await CriarUsuario({
-      //   cpfUser: data.identificador,
-      //   nomeUser: data.nome,
-      //   sobrenomeUser: "Sobrenome Fixo",
-      //   telefoneUser: data.telefone,
-      //   dataNascimentoUser: "2025-06-03",
-      //   emailUser: data.email,
-      // });
+      await CriarUsuario({
+        cpfUser: data.identificador,
+        nomeUser: data.nome,
+        sobrenomeUser: "Sobrenome Fixo",
+        telefoneUser: data.telefone,
+        dataNascimentoUser: "2025-06-03",
+        emailUser: data.email,
+      });
 
       setIsModal(true);
       setTimeout(() => {

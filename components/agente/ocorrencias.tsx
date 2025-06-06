@@ -73,7 +73,7 @@ export default function Ocorrencias() {
             <Text className="text-[#264027] mb-1">{data.data} {data.horario || ""}</Text>
 
             <Text className="font-bold mb-1">OBSERVAÇÃO:</Text>
-            <Text className="text-center text-[#264027] font-medium mb-3">{data.ocorrencia}</Text>
+            <Text className="text-center text-[#264027] font-medium">{data.ocorrencia}</Text>
 
             <Text className="font-bold mb-1">STATUS:</Text>
             <Text className="text-[#264027] mb-3"> {data.finalizado ? "Finalizado" : "Em aberto"} {data.resolucao ? `– ${data.resolucao}` : ""}

@@ -94,8 +94,9 @@ export default function FinalizarOcorrencia() {
         <Text className="text-white font-bold mb-2">RESOLUÇÃO</Text>
         <Controller control={control} name="resolucao"
           render={({ field: { onChange, value } }) => (
-            <TextInput className="border  border-white text-white rounded-md w-full px-3 py-2 mb-2"
-              placeholder="Digite a resolução" value={value} onChangeText={onChange} /> )}/>
+            <TextInput className="border  border-white text-white rounded-md w-full h-20 px-3 py-2 mb-2"
+              placeholder="Digite a resolução" value={value} onChangeText={onChange}/> 
+              )}/>
         {errors.resolucao && <Text className="text-red-500 mb-2">{errors.resolucao.message}</Text>}
 
         <TouchableOpacity onPress={handleSubmit(onSubmit)} className="border border-lime-400 px-4 py-3 rounded-full w-full items-center mt-20 mb-3">

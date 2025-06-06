@@ -52,6 +52,10 @@ export default function CriarSensor() {
 
       await postCriarSensor(userData);
       setMostrarModal(true);
+      setTimeout(() => {
+        router.push("/(agente)/telaPrincipal");
+        setMostrarModal(false);
+      }, 5000);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível enviar o monitoramento.");
     } finally {
