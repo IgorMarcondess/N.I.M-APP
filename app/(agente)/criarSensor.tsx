@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import React, { useState } from "react";
+import { ActivityIndicator, Alert, Keyboard, SafeAreaView, ScrollView, Text, TouchableOpacity, View, } from "react-native";
 import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 import { Input } from "../../components/input";
 import postCriarSensor from "../../services/POST/postCriarSensor";
@@ -71,31 +71,40 @@ export default function CriarSensor() {
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">LOCAL</Text>
-            <Controller control={control} name="local"
+            <Controller
+              control={control}
+              name="local"
               render={({ field: { onChange, value } }) => (
                 <>
-                  <Input text="LOCAL" value={value} onChangeText={onChange} />
+                  <Input text="LOCAL" value={value} onChangeText={onChange} returnKeyType="done" onSubmitEditing={Keyboard.dismiss} />
                   {errors.local && <Text className="text-red-500">{errors.local.message}</Text>}
-                </>)}/>
+                </>
+              )}
+            />
           </View>
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">UMIDADE</Text>
-            <Controller control={control} name="umidade"
+            <Controller
+              control={control}
+              name="umidade"
               render={({ field: { onChange, value } }) => (
                 <>
-                  <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                  <Input text="UMIDADE (%)" value={value} onChangeText={onChange} keyboardType="numeric" returnKeyType="done" onSubmitEditing={Keyboard.dismiss} />
                   {errors.umidade && <Text className="text-red-500">{errors.umidade.message}</Text>}
                 </>
-              )}/>
+              )}
+            />
           </View>
 
           <View className="w-[100%] mb-4">
             <Text className="text-white font-semibold mb-1">TEMPERATURA</Text>
-            <Controller control={control} name="temperatura"
+            <Controller
+              control={control}
+              name="temperatura"
               render={({ field: { onChange, value } }) => (
                 <>
-                  <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                  <Input text="TEMPERATURA (°C)" value={value} onChangeText={onChange} keyboardType="numeric" returnKeyType="done" onSubmitEditing={Keyboard.dismiss} />
                   {errors.temperatura && <Text className="text-red-500">{errors.temperatura.message}</Text>}
                 </>
               )}
@@ -103,13 +112,16 @@ export default function CriarSensor() {
           </View>
 
           <View className="flex-row w-[90%] justify-between mt-10">
-            <TouchableOpacity disabled={loading} className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center">
+            <TouchableOpacity disabled={loading} onPress={router.back} className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 mr-2 items-center">
               <Text className="text-white font-bold">VOLTAR</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={loading}
-              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center">
-              {loading ? ( <ActivityIndicator color="#fff" /> ) : ( <Text className="text-white font-bold">ENVIAR</Text>)}
+            <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={loading} className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center">
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-bold">ENVIAR</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

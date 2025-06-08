@@ -5,6 +5,8 @@ import { router } from "expo-router";
 import * as Location from "expo-location";
 import Ocorrencias from "@/components/usuario/ocorrencias";
 import { useUser } from "../../components/usuario/userContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/services/firebase";
 
 export default function TelaPrincipalUser() {
   const [nomeUsuario, setNomeUsuario] = useState("Fulano");
@@ -29,12 +31,26 @@ export default function TelaPrincipalUser() {
     buscarLocalizacao();
   }, []);
 
+    const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        router.replace("/");
+      } catch (error) {
+        console.error("Erro ao sair:", error);
+      }
+    };
+
   return (
       <SafeAreaView className="flex-1 bg-white px-6 py-10 items-center">
         <ScrollView contentContainerStyle={{ alignItems: "center" }}>
-          <Text className="text-center text-xl font-bold mt-6 text-[#264027]">
-            Bem-vindo {user?.nomeUser}!
-          </Text>
+        <View className="flex-row justify-around w-full">
+          <View className="bg-[#264027] rounded-xl items-center py-2 px-10 mb-3">
+            <Text className="font-bold color-white">{user?.nomeUser}</Text>
+          </View>
+          <TouchableOpacity onPress={handleLogout} className="border border-lime-400 rounded-xl items-center py-2 px-4 mb-3">
+            <Text className="font-bold color-lime-400">LOGOUT</Text>
+          </TouchableOpacity>
+        </View>
 
           <TouchableOpacity onPress={() => router.push("/(usuario)/criarOcorrencia")}
             className="bg-white border border-[#264027] py-3 px-10 rounded-xl mt-6 self-center">

@@ -1,5 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import { Text, View, TouchableOpacity, ScrollView, SafeAreaView, Alert } from "react-native";
+import React, { useEffect } from "react";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  Alert,
+  Keyboard,
+} from "react-native";
 import * as Location from "expo-location";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -7,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../components/input";
 import { router } from "expo-router";
 import CriarOcorrenciaAPI from "@/services/POST/postCriarOcorrencia";
-import {useUser} from "../../components/usuario/userContext"
+import { useUser } from "../../components/usuario/userContext";
 
 const cpfRegex = /^\d{11}$/;
 
@@ -24,7 +32,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function CriarOcorrencia() {
-  const { user } = useUser()
+  const { user } = useUser();
 
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -62,24 +70,23 @@ export default function CriarOcorrencia() {
     obterLocalizacaoEAtualizarCampos();
   }, []);
 
-  let id = 10;
-  const gerarId = () => {
-    return id++;
-  };
-
   const onSubmit = async (data: FormData) => {
     const infoData = new Date();
     const horario = infoData.toTimeString().split(" ")[0];
+    const gerarId = (() => {
+      let id = 1;
+      return () => id++;
+    })();
 
-   const userData = {
-      id: 1,
+    const userData = {
+      id: gerarId(),
       data: "2025-06-01",
       horario: horario,
       cidade: `${data.endereco}/${data.cidade}`,
       estado: data.estado,
       ocorrencia: data.observacao,
       finalizado: true,
-      resolucao: "em analise",
+      resolucao: "Em análise",
     };
 
     try {
@@ -87,9 +94,8 @@ export default function CriarOcorrencia() {
         Alert.alert("Erro", "Usuário não identificado. Faça login novamente.");
         return;
       }
-      
+
       await CriarOcorrenciaAPI(userData, user.cpfUser);
-      console.log("Ocorrência enviada com sucesso!");
       Alert.alert("Sucesso", "Ocorrência registrada com sucesso.");
       router.push("/telaPrincipalUser");
     } catch (error) {
@@ -110,62 +116,44 @@ export default function CriarOcorrencia() {
             name="endereco"
             render={({ field: { onChange, value } }) => (
               <>
-                <Input text="ENDEREÇO" value={value} onChangeText={onChange} />
+                <Input text="ENDEREÇO" value={value} onChangeText={onChange} returnKeyType="done"  onSubmitEditing={Keyboard.dismiss}/>
                 {errors.endereco && <Text className="text-red-500 mb-2">{errors.endereco.message}</Text>}
               </>
             )}
           />
 
           <Text className="text-white text-xl font-semibold mb-1">CIDADE</Text>
-          <Controller
-            control={control}
-            name="cidade"
-            render={({ field: { onChange, value } }) => (
+          <Controller control={control} name="cidade" render={({ field: { onChange, value } }) => (
               <>
-                <Input text="CIDADE" value={value} onChangeText={onChange} />
+                <Input text="CIDADE"value={value}  onChangeText={onChange} returnKeyType="done"  onSubmitEditing={Keyboard.dismiss}/>
                 {errors.cidade && <Text className="text-red-500 mb-2">{errors.cidade.message}</Text>}
               </>
             )}
           />
 
           <Text className="text-white text-xl font-semibold mb-1">ESTADO</Text>
-          <Controller
-            control={control}
-            name="estado"
-            render={({ field: { onChange, value } }) => (
+          <Controller control={control} name="estado" render={({ field: { onChange, value } }) => (
               <>
-                <Input text="ESTADO" value={value} onChangeText={onChange} />
+                <Input text="ESTADO" value={value}  onChangeText={onChange} returnKeyType="done"  onSubmitEditing={Keyboard.dismiss}/>
                 {errors.estado && <Text className="text-red-500 mb-2">{errors.estado.message}</Text>}
               </>
             )}
           />
 
           <Text className="text-white text-xl font-semibold mb-1">CPF</Text>
-          <Controller
-            control={control}
-            name="cpf"
-            render={({ field: { onChange, value } }) => (
+          <Controller control={control} name="cpf" render={({ field: { onChange, value } }) => (
               <>
-                <Input text="CPF (apenas números)" value={value} onChangeText={onChange} keyboardType="numeric" />
+                <Input text="CPF (apenas números)" value={value} onChangeText={onChange} keyboardType="numeric" returnKeyType="done" onSubmitEditing={Keyboard.dismiss}/>
                 {errors.cpf && <Text className="text-red-500 mb-2">{errors.cpf.message}</Text>}
               </>
             )}
           />
 
           <Text className="text-white text-xl font-semibold mb-1">DESCRIÇÃO DO PROBLEMA</Text>
-          <Controller
-            control={control}
-            name="observacao"
-            render={({ field: { onChange, value } }) => (
+          <Controller control={control} name="observacao" render={({ field: { onChange, value } }) => (
               <>
-                <Input
-                  multiline
-                  numberOfLines={4}
-                  text="Descreva o que está ocorrendo para que um analista consiga auxiliar"
-                  value={value}
-                  onChangeText={onChange}
-                  styles="text-start h-full"
-                />
+                <Input multiline numberOfLines={4} text="Descreva o que está ocorrendo para que um analista consiga auxiliar" value={value} onChangeText={onChange}
+                        styles="text-start h-full" returnKeyType="done" onSubmitEditing={Keyboard.dismiss} />
                 {errors.observacao && (
                   <Text className="text-red-500 mb-2 w-[90%] text-left">{errors.observacao.message}</Text>
                 )}
@@ -174,13 +162,13 @@ export default function CriarOcorrencia() {
           />
 
           <View className="flex-row w-[95%] justify-between mt-24">
-            <TouchableOpacity className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={() => router.push("/(usuario)/telaPrincipalUser")}>
+            <TouchableOpacity onPress={() => router.push("/(usuario)/telaPrincipalUser")}
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center">
               <Text className="text-white font-bold">Voltar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center"
-              onPress={handleSubmit(onSubmit)}>
+            <TouchableOpacity onPress={handleSubmit(onSubmit)}
+              className="flex-1 bg-transparent border border-lime-400 rounded-full py-3 ml-2 items-center">
               <Text className="text-white font-bold">Finalizar</Text>
             </TouchableOpacity>
           </View>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Alert, ImageBackground, SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { auth } from "../services/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
@@ -52,6 +52,8 @@ export default function Index() {
       setLoading(false);
     }
   };
+
+
 
   return (
     <SafeAreaView className="flex-1">

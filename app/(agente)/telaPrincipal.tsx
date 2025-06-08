@@ -38,9 +38,15 @@ export default function TelaPrincipal() {
   return (
     <SafeAreaView className="flex-1 bg-[#264027]">
       <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
-        <View className="bg-white rounded-xl items-center py-2 mb-3">
-          <Text className="font-bold">{user?.nomeUser}</Text>
-          <Text className="font-bold">CPF : {user?.cpfUser}</Text>
+
+        <View className="flex-row justify-around w-full">
+          <View className="bg-white rounded-xl items-center py-2 px-6 mb-3">
+            <Text className="font-bold">{user?.nomeUser}</Text>
+            <Text className="font-bold">CPF : {user?.cpfUser}</Text>
+          </View>
+          <View className="border border-lime-400 rounded-xl justify-center items-center py-2 px-4 mb-3">
+            <Text className="font-bold color-lime-400">LOGOUT</Text>
+          </View>
         </View>
 
         <TouchableOpacity onPress={() => router.push("/(agente)/criarSensor")}
