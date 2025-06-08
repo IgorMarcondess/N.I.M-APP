@@ -6,6 +6,8 @@ import Ocorrencias from "@/components/agente/ocorrencias";
 import { router } from "expo-router";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useUser } from "../../components/usuario/userContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/services/firebase";
 
 export default function TelaPrincipal() {
   const { user } = useUser()
@@ -35,6 +37,15 @@ export default function TelaPrincipal() {
     buscarLocalizacao();
   }, []);
 
+  const Logout = async () => {
+    try {
+      await signOut(auth);
+      router.replace("/");
+    } catch (error) {
+      console.error("Erro ao sair:", error);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-[#264027]">
       <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
@@ -44,9 +55,9 @@ export default function TelaPrincipal() {
             <Text className="font-bold">{user?.nomeUser}</Text>
             <Text className="font-bold">CPF : {user?.cpfUser}</Text>
           </View>
-          <View className="border border-lime-400 rounded-xl justify-center items-center py-2 px-4 mb-3">
+          <TouchableOpacity onPress={Logout} className="border border-lime-400 rounded-xl justify-center items-center py-2 px-4 mb-3">
             <Text className="font-bold color-lime-400">LOGOUT</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity onPress={() => router.push("/(agente)/criarSensor")}

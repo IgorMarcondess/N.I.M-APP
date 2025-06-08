@@ -31,7 +31,7 @@ export default function TelaPrincipalUser() {
     buscarLocalizacao();
   }, []);
 
-    const handleLogout = async () => {
+    const Logout = async () => {
       try {
         await signOut(auth);
         router.replace("/");
@@ -47,7 +47,7 @@ export default function TelaPrincipalUser() {
           <View className="bg-[#264027] rounded-xl items-center py-2 px-10 mb-3">
             <Text className="font-bold color-white">{user?.nomeUser}</Text>
           </View>
-          <TouchableOpacity onPress={handleLogout} className="border border-lime-400 rounded-xl items-center py-2 px-4 mb-3">
+          <TouchableOpacity onPress={Logout} className="border border-lime-400 rounded-xl items-center py-2 px-4 mb-3">
             <Text className="font-bold color-lime-400">LOGOUT</Text>
           </TouchableOpacity>
         </View>
