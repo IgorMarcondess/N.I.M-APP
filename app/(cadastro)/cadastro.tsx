@@ -79,7 +79,7 @@ export default function Cadastro() {
   };
 
   return (
-    <TouchableOpacity onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className="flex-1 bg-[#264027]">
         <View className="w-[90%] self-center mt-8 rounded-xl overflow-hidden">
           <Text className="text-white text-center text-xl font-bold mb-4">CRIAÇÃO DE CONTA</Text>
@@ -166,6 +166,6 @@ export default function Cadastro() {
         </View>
         {isModal && <ModalSucesso visible={isModal} />}
       </SafeAreaView>
-    </TouchableOpacity>
+    </TouchableWithoutFeedback>
   );
 }
