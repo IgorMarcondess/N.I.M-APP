@@ -66,7 +66,7 @@ export default function Ocorrencias() {
 
         return (
           <View key={data.id} className="bg-[#F2F6F2] rounded-md border border-[#B9D6B8] p-4 shadow-sm items-center mb-4 w-[90%] h-[240px]">
-            <Text className="font-bold">ENDEREÇO:</Text>
+            <Text className="font-bold">EENDEREÇO:</Text>
             <Text className="text-[#264027] font-medium mb-2 text-center">{endereco}</Text>
 
             <View className="flex-row mb-2">
